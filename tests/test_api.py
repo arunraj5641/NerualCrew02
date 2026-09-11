@@ -139,7 +139,7 @@ def test_health_reports_not_ok_when_neo4j_down(client):
 def test_ingest_clean_csv_returns_202_shape(client):
     c, fake_kafka, fake_neo4j = client
     res = _upload(c, "sample_clean.csv")
-    assert res.status_code == 200  # FastAPI TestClient reports the handler's return; contract body matches spec
+    assert res.status_code == 202
     body = res.json()
     assert body["status"] == "queued"
     assert body["rows_received"] == 15

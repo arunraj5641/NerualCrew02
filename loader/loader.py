@@ -45,6 +45,16 @@ if not NEO4J_PASSWORD:
     )
 
 
+def safe_json_deserializer(v: bytes | None):
+    if v is None:
+        return None
+    try:
+        return json.loads(v.decode("utf-8"))
+    except Exception as exc:
+        logger.warning("Skipping unparseable message payload: %s", exc)
+        return None
+
+
 def connect_kafka_consumer(max_attempts: int = 30, delay_seconds: float = 2.0):
     from kafka import KafkaConsumer
     from kafka.errors import NoBrokersAvailable
@@ -54,7 +64,7 @@ def connect_kafka_consumer(max_attempts: int = 30, delay_seconds: float = 2.0):
             consumer = KafkaConsumer(
                 TOPIC,
                 bootstrap_servers=KAFKA_BOOTSTRAP,
-                value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+                value_deserializer=safe_json_deserializer,
                 key_deserializer=lambda k: k.decode("utf-8") if k else None,
                 auto_offset_reset="earliest",
                 enable_auto_commit=True,
@@ -120,11 +130,17 @@ def run() -> None:
     logger.info("Loader ready, consuming topic '%s'", TOPIC)
     for message in consumer:
         payload = message.value
-        dataset_id = payload["dataset_id"]
-        job_id = payload["job_id"]
-        row_index = payload["row_index"]
-        content_hash = payload["content_hash"]
-        values = payload["values"]
+        if not payload or not isinstance(payload, dict):
+            logger.warning("Ignoring non-dict message payload: %s", payload)
+            continue
+        dataset_id = payload.get("dataset_id")
+        job_id = payload.get("job_id")
+        row_index = payload.get("row_index")
+        content_hash = payload.get("content_hash")
+        values = payload.get("values")
+        if not dataset_id or not job_id or content_hash is None or values is None:
+            logger.warning("Ignoring message missing required fields: %s", payload)
+            continue
 
         try:
             with driver.session(database=NEO4J_DATABASE) as session:

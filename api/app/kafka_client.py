@@ -65,9 +65,14 @@ class KafkaClient:
         if self._producer is None:
             return False
         try:
-            # bootstrap_connected() reflects live broker connectivity, not
-            # just "constructor didn't throw at startup".
-            return bool(self._producer.bootstrap_connected())
+            if self._producer.bootstrap_connected():
+                return True
+            client = getattr(getattr(self._producer, "_sender", None), "_client", None)
+            if client is not None:
+                brokers = client.cluster.brokers()
+                if brokers and any(client.connected(b.nodeId) or client.is_ready(b.nodeId) for b in brokers):
+                    return True
+            return self._producer.partitions_for(self.topic) is not None
         except Exception:
             return False
 

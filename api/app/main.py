@@ -87,7 +87,7 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 # POST /ingest
 # ---------------------------------------------------------------------------
-@app.post("/ingest")
+@app.post("/ingest", status_code=202)
 async def ingest(file: UploadFile = File(...)):
     raw = await file.read()
 

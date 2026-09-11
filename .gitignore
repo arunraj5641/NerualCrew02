@@ -1,8 +1,9 @@
 # Environment secrets - never commit real credentials
 .env
 
-# Large test data files
-data/sample_large.csv
+# Node / UI
+ui/node_modules/
+ui/dist/
 
 # Python
 __pycache__/
