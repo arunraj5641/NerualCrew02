@@ -1,0 +1,16 @@
+customer_id,name,group,order_id,amount
+1,Asha Rao,Billing,ORD-1001,199.00
+2,Ben Ortiz,Support,ORD-1002,49.50
+3,Chidi Okafor,Billing,ORD-1003,129.99
+4,Dana Kim,Sales,ORD-1004,899.00
+5,Elif Yilmaz,Billing,ORD-1005,59.00
+6,Farid Haidari,Support,ORD-1006,19.99
+7,Grace Liu,Sales,ORD-1007,459.00
+8,Hassan Ali,Billing,ORD-1008,89.00
+9,Ines Costa,Support,ORD-1009,29.00
+10,Jamal Brooks,Billing,ORD-1010,149.50
+11,Kavya Menon,Sales,ORD-1011,699.00
+12,Liam O'Sullivan,Billing,ORD-1012,79.99
+13,Mia Fischer,Support,ORD-1013,39.00
+14,Noor Siddiqui,Billing,ORD-1014,219.00
+15,Omar Haddad,Sales,ORD-1015,549.00
